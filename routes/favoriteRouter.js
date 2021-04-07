@@ -128,7 +128,7 @@ favoriteRouter
   .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     Favorites.findOne({ user: req.user._id })
       .then((favorite) => {
-        if (favorite) {
+        if (!favorite) {
           favorite = new Favorites({ user: req.user._id });
         }
         if (
