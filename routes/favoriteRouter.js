@@ -106,24 +106,21 @@ favoriteRouter
       .populate("user")
       .populate("dishes")
       .then(
-        (favorite) => {
-          if (favorite) {
-            const dish = favorite.dishes.filter(
-              (dish) => dish.id === req.params.dishId
-            )[0];
-            if (dish) {
+        (favorites) => {
+          if (!favorites) {
+            res.statusCode = 200;
+            res.setHeader("Content-Type", "application/json");
+            return res.json({ exists: false, favorites: favorites });
+          } else {
+            if (favorites.dishes.indexOf(req.params.dishId) < 0) {
               res.statusCode = 200;
               res.setHeader("Content-Type", "application/json");
-              res.json(dish);
+              return res.json({ exists: false, favorites: favorites });
             } else {
-              var err = new Error("You do not have dish " + req.params.dishId);
-              err.status = 404;
-              return next(err);
+              res.statusCode = 200;
+              res.setHeader("Content-Type", "application/json");
+              return res.json({ exists: true, favorites: favorites });
             }
-          } else {
-            var err = new Error("You do not have any favorites");
-            err.status = 404;
-            return next(err);
           }
         },
         (err) => next(err)
