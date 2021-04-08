@@ -56,11 +56,16 @@ favoriteRouter
         favorite
           .save()
           .then(
-            (userFavs) => {
-              res.statusCode = 201;
-              res.setHeader("Content-Type", "application/json");
-              res.json(userFavs);
-              console.log("Favorites Created");
+            (userFav) => {
+              Favorites.findById(userFav._id)
+                .populate("user")
+                .populate("dishes")
+                .then((userFav) => {
+                  res.statusCode = 201;
+                  res.setHeader("Content-Type", "application/json");
+                  res.json(userFav);
+                  console.log("Favorites Created");
+                });
             },
             (err) => next(err)
           )
@@ -142,11 +147,16 @@ favoriteRouter
         favorite
           .save()
           .then(
-            (userFavs) => {
-              res.statusCode = 201;
-              res.setHeader("Content-Type", "application/json");
-              res.json(userFavs);
-              console.log("Favorites Created");
+            (userFav) => {
+              Favorites.findById(userFav._id)
+                .populate("user")
+                .populate("dishes")
+                .then((userFav) => {
+                  res.statusCode = 201;
+                  res.setHeader("Content-Type", "application/json");
+                  res.json(userFav);
+                  console.log("Favorites Created");
+                });
             },
             (err) => next(err)
           )
@@ -166,14 +176,19 @@ favoriteRouter
             favorite.dishes = favorite.dishes.filter(
               (dish_id) => dish_id._id.toString() !== req.params.dishId
             );
-            favorite.save().then(
-              (result) => {
-                res.statusCode = 200;
-                res.setHeader("Content-Type", "application/json");
-                res.json(result);
-              },
-              (err) => next(err)
-            );
+            favorite.save().then((userFav) => {
+              Favorites.findById(userFav._id)
+                .populate("user")
+                .populate("dishes")
+                .then(
+                  (result) => {
+                    res.statusCode = 200;
+                    res.setHeader("Content-Type", "application/json");
+                    res.json(result);
+                  },
+                  (err) => next(err)
+                );
+            });
           } else {
             var err = new Error("You do not have any favorites");
             err.status = 404;
